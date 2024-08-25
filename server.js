@@ -10,11 +10,12 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("chat msg", (msg) => {
-    io.emit("chat msg", msg);
+  socket.on("chat msg", (data) => {
+    socket.to(data.roomID).emit("chat msg", data.msg);
   });
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
+
+  socket.on("join room", (roomID) => {
+    socket.join(roomID);
   });
 });
 

@@ -58,20 +58,38 @@
   <body>
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input type="text" id="input" autocomplete="off" />
+      <button type="submit">Send</button>
+    </form>
+    <form id="join-room-form">
+      <input type="text" id="join-room-input" autocomplete="off" />
+      <button type="submit">Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       const socket = io();
       const form = document.getElementById("form");
+      const joinRoomForm = document.getElementById("join-room-form");
       const input = document.getElementById("input");
+      const joinRoomInput = document.getElementById("join-room-input");
       const messages = document.getElementById("messages");
+      let curRoom = "";
+      socket.emit("join room", curRoom);
 
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (input.value) {
-          socket.emit("chat msg", input.value);
+          socket.emit("chat msg", { msg: input.value, roomID: curRoom });
           input.value = "";
+        }
+      });
+
+      joinRoomForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (joinRoomInput.value) {
+          curRoom = joinRoomInput.value;
+          socket.emit("join room", joinRoomInput.value);
+          joinRoomInput.value = "";
         }
       });
 
